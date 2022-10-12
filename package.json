@@ -1,0 +1,25 @@
+{
+  "name": "react-native-a11y-slider",
+  "version": "0.1.0",
+  "description": "An accessible range slider that supports assistive devices like screen readers",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jgillick/react-native-a11y-slider.git"
+  },
+  "keywords": [
+    "a11y",
+    "accessibility",
+    "react-native",
+    "slider"
+  ],
+  "author": "Jeremy Gillick",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jgillick/react-native-a11y-slider/issues"
+  },
+  "homepage": "https://github.com/jgillick/react-native-a11y-slider#readme"
+}
