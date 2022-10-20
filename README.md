@@ -4,6 +4,9 @@ A slider that supports assistive devices like screen readers.
 
 The slider can be setup to either have a single value or define a two value range (min/max).
 
+![Single value example](./slider-single.gif)
+![Range example](./slider-range.gif)
+
 ## Getting Started
 
 Creates a basic slider that with a min/max slider and a total range from `1` to `100`.
