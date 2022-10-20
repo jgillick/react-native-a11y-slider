@@ -49,7 +49,7 @@ You can use [`Marker.tsx`](./src/Marker.tsx) as an example
 ```jsx
 import React from "react";
 import { View } from "react-native";
-import { MarkerProps } from "@jgillick/react-native-a11y-slider";
+import { MarkerProps } from "react-native-a11y-slider";
 
 function MyMarker({ color }: MarkerProps) {
   return <View style={{ backgroundColor: 'red', height: MyMarker.size, MyMarker.size }} />;
@@ -59,7 +59,7 @@ export default MyMarker;
 ```
 
 ```jsx
-import Slider from "@jgillick/react-native-a11y-slider";
+import Slider from "react-native-a11y-slider";
 
 import MyMarker from "./MyMarker";
 

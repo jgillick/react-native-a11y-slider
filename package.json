@@ -1,5 +1,5 @@
 {
-  "name": "@jgillick/react-native-a11y-slider",
+  "name": "react-native-a11y-slider",
   "version": "0.0.1-beta.0",
   "description": "An accessible range slider that supports assistive devices like screen readers",
   "main": "dist/index.js",
