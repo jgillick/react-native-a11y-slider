@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { LabelProps } from "./types";
 
 export default function Label({ position, selected }: LabelProps) {
-  if (!position?.value) {
+  if (typeof position?.value === "undefined") {
     return <></>;
   }
   return (
