@@ -23,7 +23,7 @@ npm install -S react-native-a11y-slider
 Creates a basic slider that with a min/max slider and a total range from `1` to `100`.
 
 ```jsx
-import Slider from "@jgillick/react-native-a11y-slider";
+import Slider from "react-native-a11y-slider";
 
 function Example() {
   return <Slider min={1} max={100} values={[10, 87]} />;
