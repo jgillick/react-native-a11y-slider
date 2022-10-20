@@ -51,7 +51,7 @@ export default React.memo(
     position,
     stops,
     showLabel = true,
-    markerColor = "#000",
+    markerColor,
     panBoundaries: panBoundariesProp,
     setIndex: setIndexProp,
     labelComponent: LabelComponent = Label,
@@ -137,7 +137,10 @@ export default React.memo(
           state: PanResponderGestureState
         ) => {
           // Keep pan within boundaries
-          let px = startPosition.current ? startPosition.current + state.dx : 0;
+          const initialPx = startPosition.current
+            ? startPosition.current + state.dx
+            : state.dx;
+          let px = initialPx;
           if (px > panBoundaries?.current?.max) {
             px = panBoundaries.current.max;
           } else if (px < panBoundaries?.current?.min) {

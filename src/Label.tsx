@@ -17,6 +17,7 @@ export default function Label({ position, selected }: LabelProps) {
 }
 
 const styles = StyleSheet.create({
+  // The container positions the label above the marker thumb.
   container: {
     marginBottom: 8,
     paddingVertical: 7,
@@ -25,6 +26,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  // The inner container allows the label to grow with the text
   inner: {
     position: "absolute",
     top: 0,
