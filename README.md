@@ -10,6 +10,16 @@ The slider can be setup to either have a single value or define a two value rang
 
 ## Getting Started
 
+```sh
+yarn add react-native-a11y-slider
+```
+
+or
+
+```sh
+npm install -S react-native-a11y-slider
+```
+
 Creates a basic slider that with a min/max slider and a total range from `1` to `100`.
 
 ```jsx
