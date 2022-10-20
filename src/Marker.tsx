@@ -1,32 +1,25 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import React, { useMemo } from "react";
+import { StyleSheet, View, ViewStyle } from "react-native";
+import { MarkerProps } from "./types";
 
-import { MarkerType, SliderStop } from './types';
-
-export type MarkerProps = {
-  type: MarkerType;
-  markerCount: number;
-  position: SliderStop;
-  selected: boolean;
-  color?: string;
-};
-
-export default function Marker({ color }: MarkerProps) {
-  const colorStyle = useMemo(() => {
+function Marker({ color }: MarkerProps) {
+  const styled = useMemo(() => {
+    let colorStyle: ViewStyle = {};
     if (color) {
-      return { backgroundColor: color } as ViewStyle;
+      colorStyle.backgroundColor = color;
     }
+    return [styles.marker, colorStyle];
   }, [color]);
 
-  return <View style={[styles.marker, colorStyle]} />;
+  return <View style={styled} />;
 }
 Marker.size = 24;
+export default Marker;
 
 const styles = StyleSheet.create({
   marker: {
     width: Marker.size,
     height: Marker.size,
     borderRadius: Marker.size / 2,
-    backgroundColor: '#333',
   },
 });

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -8,12 +8,18 @@ import {
   PanResponderGestureState,
   LayoutChangeEvent,
   AccessibilityProps,
-} from 'react-native';
+} from "react-native";
 
-import { SliderStop, PanBoundaries, MarkerType, setA11yMarkerPropsFunction, SliderType } from './types';
-import Label from './Label';
-import Marker from './Marker';
-import useA11yMarkerProps from './useA11yMarkerProps';
+import {
+  SliderStop,
+  PanBoundaries,
+  MarkerType,
+  setA11yMarkerPropsFunction,
+  SliderType,
+} from "./types";
+import Label from "./Label";
+import Marker from "./Marker";
+import useA11yMarkerProps from "./useA11yMarkerProps";
 
 /**
  * The container that holds the marker and label and handles the panning gesture.
@@ -24,14 +30,14 @@ type GestureContainerProps = AccessibilityProps & {
   markerCount: number;
   position: SliderStop;
   stops: SliderStop[];
-  minValue: number;
-  maxValue: number;
+  minValue?: number;
+  maxValue?: number;
   panBoundaries: PanBoundaries;
   showLabel?: boolean;
   markerColor?: string;
   labelComponent?: typeof Label;
   markerComponent?: typeof Marker;
-  setIndex: (number, boolean?) => void;
+  setIndex: (position: number, pushOther?: boolean) => void;
   setA11yMarkerProps?: setA11yMarkerPropsFunction;
 };
 
@@ -45,7 +51,7 @@ export default React.memo(
     position,
     stops,
     showLabel = true,
-    markerColor = '#000',
+    markerColor = "#000",
     panBoundaries: panBoundariesProp,
     setIndex: setIndexProp,
     labelComponent: LabelComponent = Label,
@@ -80,15 +86,19 @@ export default React.memo(
      * This allows the container element to automatically size to the slider without hard-coded heights/widths.
      * However, because of this, the pixel offsets for the upper marker is inverse to the lower marker.
      */
-    const getStopPx = useCallback((stop: SliderStop) => (type === MarkerType.UPPER ? stop.pxInverse : stop.px), [type]);
+    const getStopPx = useCallback(
+      (stop: SliderStop) =>
+        type === MarkerType.UPPER ? stop.pxInverse : stop.px,
+      [type]
+    );
 
     /**
      * Get the closest stop position to this pixel value
      */
     const getStopPosition = useCallback(
-      (px: number): SliderStop => {
+      (px: number): SliderStop | null => {
         let closest = Infinity;
-        let found: SliderStop;
+        let found: SliderStop | null = null;
 
         // Find the stop that is the closest to px.
         for (let i = 0; i < stopPositions.current.length; i++) {
@@ -114,14 +124,20 @@ export default React.memo(
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
 
-        onPanResponderStart: (_evt: GestureResponderEvent, _state: PanResponderGestureState) => {
+        onPanResponderStart: (
+          _evt: GestureResponderEvent,
+          _state: PanResponderGestureState
+        ) => {
           isPanningRef.current = true;
           setPanning(true);
         },
 
-        onPanResponderMove: (_evt: GestureResponderEvent, state: PanResponderGestureState) => {
+        onPanResponderMove: (
+          _evt: GestureResponderEvent,
+          state: PanResponderGestureState
+        ) => {
           // Keep pan within boundaries
-          let px = startPosition.current + state.dx;
+          let px = startPosition.current ? startPosition.current + state.dx : 0;
           if (px > panBoundaries?.current?.max) {
             px = panBoundaries.current.max;
           } else if (px < panBoundaries?.current?.min) {
@@ -140,7 +156,7 @@ export default React.memo(
         onPanResponderEnd: () => {
           isPanningRef.current = false;
           setPanning(false);
-          if (typeof currentPosition.current === 'number') {
+          if (typeof currentPosition.current === "number") {
             startPosition.current = currentPosition.current;
             panValue.setValue(currentPosition.current);
           }
@@ -162,7 +178,7 @@ export default React.memo(
      * Update pan value and position from props to references
      */
     useEffect(() => {
-      if (!isPanningRef.current && typeof position?.px !== 'undefined') {
+      if (!isPanningRef.current && typeof position?.px !== "undefined") {
         startPosition.current = getStopPx(position);
         panValue.setValue(startPosition.current);
       }
@@ -203,7 +219,14 @@ export default React.memo(
           },
         ]}
       >
-        {showLabel && <LabelComponent position={position} selected={isPanning} type={type} markerCount={markerCount} />}
+        {showLabel && (
+          <LabelComponent
+            position={position}
+            selected={isPanning}
+            type={type}
+            markerCount={markerCount}
+          />
+        )}
         <View {...panResponder.panHandlers} onLayout={onMarkerLayout}>
           <MarkerComponent
             position={position}
@@ -220,8 +243,8 @@ export default React.memo(
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    flexDirection: 'column',
+    alignItems: "center",
+    flexDirection: "column",
   },
 
   selected: {

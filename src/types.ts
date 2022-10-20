@@ -1,4 +1,4 @@
-import { AccessibilityProps } from 'react-native';
+import { AccessibilityProps } from "react-native";
 
 /**
  * The type of slider this is.
@@ -30,7 +30,7 @@ export type SliderValue = number | string;
  */
 export type SliderStop = {
   index: number;
-  value: number;
+  value: SliderValue;
 
   /** Pixel position for the lower thumb marker */
   px: number;
@@ -50,7 +50,9 @@ export type PanBoundaries = {
 /**
  * The optional function that can be called to set the accessibility values on the slider marker.
  */
-export type setA11yMarkerPropsFunction = (setA11yMarkerPropsFunctionArgs) => AccessibilityProps;
+export type setA11yMarkerPropsFunction = (
+  args: setA11yMarkerPropsFunctionArgs
+) => AccessibilityProps;
 export type setA11yMarkerPropsFunctionArgs = {
   /** The marker type. Either the lower value or the upper value. */
   markerType: MarkerType;
@@ -59,8 +61,29 @@ export type setA11yMarkerPropsFunctionArgs = {
   value: SliderValue;
 
   /** The minimum value this marker can be */
-  minValue: SliderValue;
+  minValue?: SliderValue;
 
   /** The maximum value this marker can be */
-  maxValue: SliderValue;
+  maxValue?: SliderValue;
+};
+
+/**
+ * Custom marker component props
+ */
+export type MarkerProps = {
+  type: MarkerType;
+  markerCount: number;
+  position: SliderStop;
+  selected: boolean;
+  color?: string;
+};
+
+/**
+ * Custom label component props
+ */
+export type LabelProps = {
+  type: MarkerType;
+  markerCount: number;
+  position: SliderStop;
+  selected: boolean;
 };

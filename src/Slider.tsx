@@ -1,10 +1,24 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { View, StyleSheet, LayoutChangeEvent, StyleProp, ViewStyle, AccessibilityProps } from 'react-native';
+import React, { useState, useCallback, useEffect, useMemo } from "react";
+import {
+  View,
+  StyleSheet,
+  LayoutChangeEvent,
+  StyleProp,
+  ViewStyle,
+  AccessibilityProps,
+} from "react-native";
 
-import { MarkerType, SliderStop, SliderValue, PanBoundaries, setA11yMarkerPropsFunction, SliderType } from './types';
-import GestureContainer from './GestureContainer';
-import Label from './Label';
-import Marker from './Marker';
+import {
+  MarkerType,
+  SliderStop,
+  SliderValue,
+  PanBoundaries,
+  setA11yMarkerPropsFunction,
+  SliderType,
+} from "./types";
+import GestureContainer from "./GestureContainer";
+import Label from "./Label";
+import Marker from "./Marker";
 
 type A11ySliderProps = AccessibilityProps & {
   values: SliderValue[];
@@ -28,8 +42,8 @@ export default React.memo(
     max,
     values,
     sliderValues,
-    markerColor,
-    showLabel,
+    markerColor = "#333",
+    showLabel = true,
     style,
     trackStyle,
     selectedTrackStyle,
@@ -42,19 +56,21 @@ export default React.memo(
   }: A11ySliderProps) => {
     const markerCount = values.length;
     const [sliderWidth, setSliderWidth] = useState<number>(0);
-    const [lowerIndex, setLowerIndexState] = useState<number>();
+    const [lowerIndex, setLowerIndexState] = useState<number>(0);
     const [upperIndex, setUpperIndexState] = useState<number>();
-    const hasUpperIndex = typeof upperIndex === 'number';
+    const hasUpperIndex = typeof upperIndex === "number";
     const sliderType = values.length > 1 ? SliderType.RANGE : SliderType.SINGLE;
 
-    const [stops, setStops] = useState<SliderStop[]>(null);
+    const [stops, setStops] = useState<SliderStop[]>([]);
 
     /**
      * Set the absolute upper and lower boundaries for each marker thumb so they cannot get
      * dragged past one another.
      */
-    const [lowerPanBoundaries, upperPanBoundaries] = useMemo<PanBoundaries[]>(() => {
-      if (!stops || typeof lowerIndex === 'undefined') {
+    const [lowerPanBoundaries, upperPanBoundaries] = useMemo<
+      PanBoundaries[]
+    >(() => {
+      if (!stops.length || typeof lowerIndex === "undefined") {
         return [];
       }
 
@@ -78,7 +94,7 @@ export default React.memo(
      */
     const trackPlacement = useMemo(() => {
       let margin = 15;
-      if (typeof markerComponent?.size !== 'undefined') {
+      if (typeof markerComponent?.size !== "undefined") {
         margin = markerComponent?.size / 2;
       }
       return {
@@ -98,7 +114,7 @@ export default React.memo(
         right: 0,
       };
 
-      if (!stops?.length) {
+      if (!stops?.length || typeof lowerIndex === "undefined") {
         return {};
       }
 
@@ -118,16 +134,40 @@ export default React.memo(
     }, [stops, lowerIndex, hasUpperIndex, upperIndex, sliderWidth]);
 
     /**
+     * Fire the onChange handler
+     */
+    const fireChange = useCallback(
+      (lowerIdx: number, upperIdx: number | undefined) => {
+        if (typeof onChange !== "function") {
+          return;
+        }
+        const changedValues = [stops[lowerIdx].value];
+        if (hasUpperIndex && typeof upperIdx !== "undefined") {
+          changedValues.push(stops[upperIdx]?.value);
+        }
+        onChange(changedValues);
+      },
+      [onChange, stops, hasUpperIndex]
+    );
+
+    /**
      * Get the slider width and calculate the slider stops
      */
     const defineSliderScale = useCallback(
       (event: LayoutChangeEvent) => {
         const { width } = event.nativeEvent.layout;
-        const stopCount = sliderValues?.length ? sliderValues.length : (max - min) / increment;
-        const widthPerStep = width / (stopCount - 1); // subtract one so the last stop is at the end of the track
-        const stopValues = [];
-        const valuePositionMap = {};
+        const hasMinMax = typeof min === "number" && typeof max === "number";
 
+        let stopCount: number = sliderValues?.length || 0;
+        if (!stopCount && hasMinMax) {
+          stopCount = (max - min) / increment;
+        }
+
+        const widthPerStep = width / (stopCount - 1); // subtract one so the last stop is at the end of the track
+        const stopValues: SliderStop[] = [];
+        const valuePositionMap: Record<SliderValue, SliderStop> = {};
+
+        // If the stop values were passed in
         if (sliderValues?.length) {
           for (let i = 0; i < sliderValues.length; i++) {
             const value = sliderValues[i];
@@ -141,7 +181,9 @@ export default React.memo(
             };
             valuePositionMap[value] = stopValues[i];
           }
-        } else {
+        }
+        // Calculate from a min/max
+        else if (hasMinMax) {
           for (let i = 0, value = min; value <= max; i++, value += increment) {
             const px = Math.round(i * widthPerStep);
             const pxInverse = px - width;
@@ -167,20 +209,20 @@ export default React.memo(
      */
     const onSetLowerIndex = useCallback(
       (idx: number, pushUpper: boolean = false) => {
-        let _upperIndex = upperIndex;
+        let newUpperIndex = upperIndex || 0;
 
         // Push upper value, if necessary
         if (pushUpper && hasUpperIndex && idx >= upperIndex) {
           if (upperIndex < stops.length - 1) {
-            _upperIndex++;
-            setUpperIndexState(_upperIndex);
+            newUpperIndex++;
+            setUpperIndexState(newUpperIndex);
           } else {
             return; // cannot push if upper is already at the end
           }
         }
 
         // Cannot go above upper value
-        if (hasUpperIndex && idx >= _upperIndex) {
+        if (hasUpperIndex && newUpperIndex && idx >= newUpperIndex) {
           return;
         }
 
@@ -192,8 +234,9 @@ export default React.memo(
         }
 
         setLowerIndexState(idx);
+        fireChange(idx, newUpperIndex);
       },
-      [upperIndex, hasUpperIndex, stops?.length]
+      [upperIndex, hasUpperIndex, stops?.length, fireChange]
     );
 
     /**
@@ -201,20 +244,20 @@ export default React.memo(
      */
     const onSetUpperIndex = useCallback(
       (idx: number, pushLower: boolean = false) => {
-        let _lowerIndex = lowerIndex;
+        let newLowerIndex = lowerIndex;
 
         // Push lower value, if necessary
-        if (pushLower && idx <= _lowerIndex && idx >= 0) {
+        if (pushLower && idx <= lowerIndex && idx >= 0) {
           if (lowerIndex > 0) {
-            _lowerIndex--;
-            setLowerIndexState(_lowerIndex);
+            newLowerIndex--;
+            setLowerIndexState(newLowerIndex);
           } else {
             return; // cannot push if lower index is already at the start
           }
         }
 
         // Cannot go below lower value
-        if (idx <= _lowerIndex) {
+        if (idx <= newLowerIndex) {
           return;
         }
 
@@ -225,29 +268,30 @@ export default React.memo(
           idx = 1;
         }
         setUpperIndexState(idx);
+        fireChange(newLowerIndex, idx);
       },
-      [lowerIndex, stops?.length]
+      [lowerIndex, stops?.length, fireChange]
     );
 
     /**
      * Set the stop values from props
      */
     useEffect(() => {
-      if (!values?.length || !stops) {
+      if (!values?.length || !stops.length) {
         return;
       }
 
       const [lower, upper] = values;
-      const hasUpperValue = typeof upper !== 'undefined';
+      const hasUpperValue = typeof upper !== "undefined";
 
-      let lowerIdx: number;
-      let upperIdx: number;
+      let lowerIdx: number | null = null;
+      let upperIdx: number | null = null;
 
       // Find the position index for each value
       for (let i = 0; i < stops.length; i++) {
         const position = stops[i];
 
-        if (typeof lowerIdx === 'undefined') {
+        if (lowerIdx === null) {
           if (position.value === lower) {
             lowerIdx = i;
           }
@@ -260,40 +304,25 @@ export default React.memo(
         }
       }
 
-      if (typeof lowerIdx === 'undefined') {
+      if (lowerIdx === null) {
         lowerIdx = 0;
-      }
-      if (hasUpperValue && typeof upperIdx === 'undefined') {
-        upperIdx = stops.length - 1;
       }
 
       setLowerIndexState(lowerIdx);
       if (hasUpperValue) {
+        if (upperIdx === null) {
+          upperIdx = stops.length - 1;
+        }
         setUpperIndexState(upperIdx);
       }
     }, [values, stops]);
-
-    /**
-     * Fire onChange when the upper or lower value changes
-     */
-    useEffect(() => {
-      if (typeof onChange !== 'function') {
-        return;
-      }
-
-      const changedValues = [stops[lowerIndex].value];
-      if (hasUpperIndex) {
-        changedValues.push(stops[upperIndex].value);
-      }
-      onChange(changedValues);
-    }, [lowerIndex, upperIndex, onChange, stops, hasUpperIndex]);
 
     return (
       <View style={style}>
         <View style={[styles.container]}>
           {/* Thumb markers */}
           <View style={styles.markerContainer}>
-            {typeof lowerIndex === 'number' && stops && (
+            {typeof lowerIndex === "number" && stops && stops[lowerIndex] && (
               <GestureContainer
                 markerCount={markerCount}
                 type={MarkerType.LOWER}
@@ -312,7 +341,7 @@ export default React.memo(
                 {...accessibilityProps}
               />
             )}
-            {hasUpperIndex && stops && (
+            {hasUpperIndex && stops && stops[upperIndex] && (
               <GestureContainer
                 markerCount={markerCount}
                 type={MarkerType.UPPER}
@@ -335,9 +364,18 @@ export default React.memo(
 
           <View style={[styles.trackContainer, trackPlacement]}>
             {/* Full track */}
-            <View style={[styles.track, trackStyle]} onLayout={defineSliderScale} />
+            <View
+              style={[styles.track, trackStyle]}
+              onLayout={defineSliderScale}
+            />
             {/* Selected track */}
-            <View style={[styles.selectedTrack, selectedTrackCoordinates, selectedTrackStyle]} />
+            <View
+              style={[
+                styles.selectedTrack,
+                selectedTrackCoordinates,
+                selectedTrackStyle,
+              ]}
+            />
           </View>
         </View>
       </View>
@@ -347,10 +385,11 @@ export default React.memo(
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
+    position: "relative",
+    flex: 1,
   },
   trackContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
@@ -358,23 +397,23 @@ const styles = StyleSheet.create({
   },
   track: {
     height: 1,
-    width: '100%',
+    width: "100%",
     borderBottomWidth: 2,
-    borderColor: '#999',
+    borderColor: "#999",
   },
   selectedTrack: {
     flex: 1,
     height: 1,
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     bottom: 0,
     zIndex: 0,
     borderBottomWidth: 2,
-    borderColor: '#333',
+    borderColor: "#333",
   },
   markerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     zIndex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
 });
