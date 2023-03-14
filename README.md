@@ -8,6 +8,8 @@ The slider can be setup to either have a single value or define a two value rang
 
 ![Range example](./slider-range.gif)
 
+<img src="./examples.png" width="350" alt="" />
+
 ## Getting Started
 
 ```sh
@@ -44,6 +46,8 @@ function Example() {
 | selectedTrackStyle |                                  |   `ViewStyle`    |                      A style to apply to the selected section of the slider track.                      |
 |     showLabel      |              `true`              |    `boolean`     |                          Show the floating marker label over the marker thumb.                          |
 |      onChange      |                                  | (values) => void |                                  Fired when the slider value changes.                                   |
+|   onSlidingStart   |                                  |  (type) => void  |                           Fired when one of the markers starts to be dragged.                           |
+| onSlidingComplete  |                                  |  (type) => void  |                          Fired when one of the markers finishes being dragged.                          |
 |   labelComponent   |  [`src/Label`](./src/Label.tsx)  |    Component     |                            The component used for the floating marker label.                            |
 |  markerComponent   | [`srv/Marker`](./src/Marker.tsx) |    Component     | The component used for the marker thumb. Note, this needs to have a static `size` property. (see below) |
 | setA11yMarkerProps |                                  |     Function     |                             Customize the accessibility values (see below)                              |
@@ -62,7 +66,15 @@ import { View } from "react-native";
 import { MarkerProps } from "react-native-a11y-slider";
 
 function MyMarker({ color }: MarkerProps) {
-  return <View style={{ backgroundColor: 'red', height: MyMarker.size, MyMarker.size }} />;
+  return (
+    <View
+      style={{
+        backgroundColor: "red",
+        height: MyMarker.size,
+        width: MyMarker.size,
+      }}
+    />
+  );
 }
 Marker.size = 30;
 export default MyMarker;

@@ -37,6 +37,8 @@ type GestureContainerProps = AccessibilityProps & {
   markerColor?: string;
   labelComponent?: typeof Label;
   markerComponent?: typeof Marker;
+  onSlidingStart?: (slider: MarkerType) => void;
+  onSlidingComplete?: (slider: MarkerType) => void;
   setIndex: (position: number, pushOther?: boolean) => void;
   setA11yMarkerProps?: setA11yMarkerPropsFunction;
 };
@@ -56,6 +58,8 @@ export default React.memo(
     setIndex: setIndexProp,
     labelComponent: LabelComponent = Label,
     markerComponent: MarkerComponent = Marker,
+    onSlidingStart,
+    onSlidingComplete,
     setA11yMarkerProps,
     ...accessibilityProps
   }: GestureContainerProps) => {
@@ -130,6 +134,9 @@ export default React.memo(
         ) => {
           isPanningRef.current = true;
           setPanning(true);
+          if (typeof onSlidingStart === "function") {
+            onSlidingStart(type);
+          }
         },
 
         onPanResponderMove: (
@@ -159,6 +166,9 @@ export default React.memo(
         onPanResponderEnd: () => {
           isPanningRef.current = false;
           setPanning(false);
+          if (typeof onSlidingComplete === "function") {
+            onSlidingComplete(type);
+          }
           if (typeof currentPosition.current === "number") {
             startPosition.current = currentPosition.current;
             panValue.setValue(currentPosition.current);

@@ -1,16 +1,43 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useState, useMemo } from "react";
+import { StyleSheet, Text, View, LayoutChangeEvent } from "react-native";
 
 import { LabelProps } from "./types";
 
+const MIN_HEIGHT = 30;
+
 export default function Label({ position, selected }: LabelProps) {
+  const [height, setHeight] = useState(30);
+
+  const onLayout = useCallback((event: LayoutChangeEvent) => {
+    const height = Math.max(event.nativeEvent.layout.height, MIN_HEIGHT);
+    setHeight(height);
+  }, []);
+
+  const containerStyles = useMemo(
+    () => [styles.container, { height }],
+    [height]
+  );
+
   if (typeof position?.value === "undefined") {
     return <></>;
   }
   return (
-    <View style={styles.container}>
-      <View style={[styles.inner, selected && styles.selected]}>
-        <Text style={styles.text}>{position.value}</Text>
+    <View>
+      {/* Calculate the text height */}
+      <View
+        style={styles.textSizer}
+        accessibilityElementsHidden={false}
+        importantForAccessibility="no-hide-descendants"
+      >
+        <Text style={styles.text} onLayout={onLayout}>
+          {position.value}
+        </Text>
+      </View>
+
+      <View style={containerStyles}>
+        <View style={[styles.inner, selected && styles.selected]}>
+          <Text style={styles.text}>{position.value}</Text>
+        </View>
       </View>
     </View>
   );
@@ -22,7 +49,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingVertical: 7,
     paddingHorizontal: 12,
-    height: 30,
+    height: MIN_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -43,5 +70,11 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
+  },
+  textSizer: {
+    position: "absolute",
+    width: 1,
+    zIndex: 0,
+    opacity: 0,
   },
 });

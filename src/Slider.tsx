@@ -34,6 +34,8 @@ type A11ySliderProps = AccessibilityProps & {
   labelComponent?: typeof Label;
   markerComponent?: typeof Marker;
   onChange?: (values: SliderValue[]) => void;
+  onSlidingStart?: (slider: MarkerType) => void;
+  onSlidingComplete?: (slider: MarkerType) => void;
   setA11yMarkerProps?: setA11yMarkerPropsFunction;
 };
 export default React.memo(
@@ -49,6 +51,8 @@ export default React.memo(
     selectedTrackStyle,
     increment = 1,
     onChange,
+    onSlidingStart,
+    onSlidingComplete,
     labelComponent,
     setA11yMarkerProps,
     markerComponent = Marker,
@@ -318,8 +322,8 @@ export default React.memo(
     }, [values, stops]);
 
     return (
-      <View style={style}>
-        <View style={[styles.container]}>
+      <View style={[styles.wrapper, style]}>
+        <View style={styles.container}>
           {/* Thumb markers */}
           <View style={styles.markerContainer}>
             {typeof lowerIndex === "number" && stops && stops[lowerIndex] && (
@@ -338,6 +342,8 @@ export default React.memo(
                 markerColor={markerColor}
                 setIndex={onSetLowerIndex}
                 setA11yMarkerProps={setA11yMarkerProps}
+                onSlidingStart={onSlidingStart}
+                onSlidingComplete={onSlidingComplete}
                 {...accessibilityProps}
               />
             )}
@@ -357,6 +363,8 @@ export default React.memo(
                 markerColor={markerColor}
                 setIndex={onSetUpperIndex}
                 setA11yMarkerProps={setA11yMarkerProps}
+                onSlidingStart={onSlidingStart}
+                onSlidingComplete={onSlidingComplete}
                 {...accessibilityProps}
               />
             )}
@@ -384,9 +392,12 @@ export default React.memo(
 );
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 0,
+    width: "100%",
+  },
   container: {
     position: "relative",
-    flex: 1,
   },
   trackContainer: {
     position: "absolute",

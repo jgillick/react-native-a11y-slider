@@ -8,6 +8,7 @@ module.exports = {
       files: ["*.ts", "*.tsx"],
       rules: {
         "no-undef": "off",
+        quotes: ["double", "double"],
       },
     },
   ],
