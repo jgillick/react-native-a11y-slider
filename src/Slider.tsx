@@ -20,7 +20,7 @@ import GestureContainer from "./GestureContainer";
 import Label from "./Label";
 import Marker from "./Marker";
 
-type A11ySliderProps = AccessibilityProps & {
+export type SliderProps = AccessibilityProps & {
   values: SliderValue[];
   min?: number;
   max?: number;
@@ -57,7 +57,7 @@ export default React.memo(
     setA11yMarkerProps,
     markerComponent = Marker,
     ...accessibilityProps
-  }: A11ySliderProps) => {
+  }: SliderProps) => {
     const markerCount = values.length;
     const [sliderWidth, setSliderWidth] = useState<number>(0);
     const [lowerIndex, setLowerIndexState] = useState<number>(0);

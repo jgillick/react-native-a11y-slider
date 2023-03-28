@@ -1,6 +1,6 @@
 {
   "name": "react-native-a11y-slider",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "An accessible range slider that supports assistive devices like screen readers",
   "main": "dist/index.js",
   "types": "dist/*.d.ts",
