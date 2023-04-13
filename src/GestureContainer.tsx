@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -8,6 +14,7 @@ import {
   PanResponderGestureState,
   LayoutChangeEvent,
   AccessibilityProps,
+  Insets,
 } from "react-native";
 
 import {
@@ -35,6 +42,7 @@ type GestureContainerProps = AccessibilityProps & {
   panBoundaries: PanBoundaries;
   showLabel?: boolean;
   markerColor?: string;
+  hitSlop?: Insets;
   labelComponent?: typeof Label;
   markerComponent?: typeof Marker;
   onSlidingStart?: (slider: MarkerType) => void;
@@ -54,6 +62,7 @@ export default React.memo(
     stops,
     showLabel = true,
     markerColor,
+    hitSlop,
     panBoundaries: panBoundariesProp,
     setIndex: setIndexProp,
     labelComponent: LabelComponent = Label,
@@ -240,7 +249,11 @@ export default React.memo(
             markerCount={markerCount}
           />
         )}
-        <View {...panResponder.panHandlers} onLayout={onMarkerLayout}>
+        <View
+          {...panResponder.panHandlers}
+          onLayout={onMarkerLayout}
+          hitSlop={hitSlop}
+        >
           <MarkerComponent
             position={position}
             selected={isPanning}

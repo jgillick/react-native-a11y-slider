@@ -6,6 +6,7 @@ import {
   StyleProp,
   ViewStyle,
   AccessibilityProps,
+  Insets,
 } from "react-native";
 
 import {
@@ -31,6 +32,7 @@ export type SliderProps = AccessibilityProps & {
   trackStyle?: StyleProp<ViewStyle>;
   selectedTrackStyle?: StyleProp<ViewStyle>;
   style?: StyleProp<ViewStyle>;
+  hitSlop?: Insets;
   labelComponent?: typeof Label;
   markerComponent?: typeof Marker;
   onChange?: (values: SliderValue[]) => void;
@@ -50,6 +52,7 @@ export default React.memo(
     trackStyle,
     selectedTrackStyle,
     increment = 1,
+    hitSlop,
     onChange,
     onSlidingStart,
     onSlidingComplete,
@@ -344,6 +347,7 @@ export default React.memo(
                 setA11yMarkerProps={setA11yMarkerProps}
                 onSlidingStart={onSlidingStart}
                 onSlidingComplete={onSlidingComplete}
+                hitSlop={hitSlop}
                 {...accessibilityProps}
               />
             )}
@@ -365,6 +369,7 @@ export default React.memo(
                 setA11yMarkerProps={setA11yMarkerProps}
                 onSlidingStart={onSlidingStart}
                 onSlidingComplete={onSlidingComplete}
+                hitSlop={hitSlop}
                 {...accessibilityProps}
               />
             )}

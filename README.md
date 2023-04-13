@@ -34,23 +34,24 @@ function Example() {
 
 ## Props
 
-|     Prop name      |             Default              |       Type       |                                               Description                                               |
-| :----------------: | :------------------------------: | :--------------: | :-----------------------------------------------------------------------------------------------------: |
-|       values       |               [0]                |    `number[]`    |    The initial values of the sliders. If the array has two values, there will be two slider markers     |
-|        min         |                                  |     `number`     |                                  The minimum value of the slider scale                                  |
-|        max         |                                  |     `number`     |                                    The max value of the slider scale                                    |
-|     increment      |                1                 |     `number`     |               If `min` and `max` are defined, this is the increment between slider steps.               |
-|    sliderValues    |                                  |    `number[]`    |             Hardcode the slider step values. If this is used, `min` and `max` are ignored.              |
-|    markerColor     |            `#333333`             |     'string'     |                            The hex color to use for the slider marker thumb.                            |
-|     trackStyle     |                                  |   `ViewStyle`    |                                  A style to apply to the slider track.                                  |
-| selectedTrackStyle |                                  |   `ViewStyle`    |                      A style to apply to the selected section of the slider track.                      |
-|     showLabel      |              `true`              |    `boolean`     |                          Show the floating marker label over the marker thumb.                          |
-|      onChange      |                                  | (values) => void |                                  Fired when the slider value changes.                                   |
-|   onSlidingStart   |                                  |  (type) => void  |                           Fired when one of the markers starts to be dragged.                           |
-| onSlidingComplete  |                                  |  (type) => void  |                          Fired when one of the markers finishes being dragged.                          |
-|   labelComponent   |  [`src/Label`](./src/Label.tsx)  |    Component     |                            The component used for the floating marker label.                            |
-|  markerComponent   | [`srv/Marker`](./src/Marker.tsx) |    Component     | The component used for the marker thumb. Note, this needs to have a static `size` property. (see below) |
-| setA11yMarkerProps |                                  |     Function     |                             Customize the accessibility values (see below)                              |
+|     Prop name      |             Default              |                        Type                         |                                               Description                                               |
+| :----------------: | :------------------------------: | :-------------------------------------------------: | :-----------------------------------------------------------------------------------------------------: |
+|       values       |               [0]                |                     `number[]`                      |    The initial values of the sliders. If the array has two values, there will be two slider markers     |
+|        min         |                                  |                      `number`                       |                                  The minimum value of the slider scale                                  |
+|        max         |                                  |                      `number`                       |                                    The max value of the slider scale                                    |
+|     increment      |                1                 |                      `number`                       |               If `min` and `max` are defined, this is the increment between slider steps.               |
+|    sliderValues    |                                  |                     `number[]`                      |             Hardcode the slider step values. If this is used, `min` and `max` are ignored.              |
+|    markerColor     |            `#333333`             |                      'string'                       |                            The hex color to use for the slider marker thumb.                            |
+|     trackStyle     |                                  |                     `ViewStyle`                     |                                  A style to apply to the slider track.                                  |
+| selectedTrackStyle |                                  |                     `ViewStyle`                     |                      A style to apply to the selected section of the slider track.                      |
+|     showLabel      |              `true`              |                      `boolean`                      |                          Show the floating marker label over the marker thumb.                          |
+|      onChange      |                                  |                  (values) => void                   |                                  Fired when the slider value changes.                                   |
+|   onSlidingStart   |                                  |                   (type) => void                    |                           Fired when one of the markers starts to be dragged.                           |
+| onSlidingComplete  |                                  |                   (type) => void                    |                          Fired when one of the markers finishes being dragged.                          |
+|   labelComponent   |  [`src/Label`](./src/Label.tsx)  |                      Component                      |                            The component used for the floating marker label.                            |
+|  markerComponent   | [`srv/Marker`](./src/Marker.tsx) |                      Component                      | The component used for the marker thumb. Note, this needs to have a static `size` property. (see below) |
+| setA11yMarkerProps |                                  |                      Function                       |                             Customize the accessibility values (see below)                              |
+|      hitSlop       |                                  | [Insets](https://reactnative.dev/docs/view#hitslop) |                      Defines how far a touch event can start away from the marker                       |
 
 ## Custom Marker
 
