@@ -1,4 +1,11 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -60,7 +67,9 @@ export type SliderProps<SliderValueType extends SliderValue = SliderValue> =
     markerComponent?: typeof Marker;
 
     /** Fired when the slider value changes */
-    onChange?: (values: SliderValueType[]) => void;
+    onChange?:
+      | ((values: SliderValueType[]) => void)
+      | Dispatch<SetStateAction<SliderValueType[]>>;
     /** Fired when one of the markers starts to be dragged */
     onSlidingStart?: (slider: MarkerType) => void;
     /** Fired when one of the markers finishes being dragged */
@@ -69,7 +78,7 @@ export type SliderProps<SliderValueType extends SliderValue = SliderValue> =
     /** Customize the accessibility values */
     setA11yMarkerProps?: setA11yMarkerPropsFunction;
   };
-export default React.memo(function Slider<
+export default function Slider<
   SliderValueType extends SliderValue = SliderValue
 >({
   min,
@@ -368,8 +377,28 @@ export default React.memo(function Slider<
     }
   }, [values, stops]);
 
+  /**
+   * Style memoizing
+   */
+  const wrapperStyles = useMemo(
+    () => [styles.wrapper, style],
+    [styles.wrapper, style]
+  );
+  const trackWrapperStyles = useMemo(
+    () => [styles.trackContainer, trackPlacement],
+    [styles.trackContainer, trackPlacement]
+  );
+  const trackStyles = useMemo(
+    () => [styles.track, trackStyle],
+    [styles.track, trackStyle]
+  );
+  const trackSelectedStyles = useMemo(
+    () => [styles.selectedTrack, selectedTrackCoordinates, selectedTrackStyle],
+    [styles.selectedTrack, selectedTrackCoordinates, selectedTrackStyle]
+  );
+
   return (
-    <View style={[styles.wrapper, style]}>
+    <View style={wrapperStyles}>
       <View style={styles.container}>
         {/* Thumb markers */}
         <View style={styles.markerContainer}>
@@ -423,25 +452,16 @@ export default React.memo(function Slider<
           )}
         </View>
 
-        <View style={[styles.trackContainer, trackPlacement]}>
+        <View style={trackWrapperStyles}>
           {/* Full track */}
-          <View
-            style={[styles.track, trackStyle]}
-            onLayout={defineSliderScale}
-          />
+          <View style={trackStyles} onLayout={defineSliderScale} />
           {/* Selected track */}
-          <View
-            style={[
-              styles.selectedTrack,
-              selectedTrackCoordinates,
-              selectedTrackStyle,
-            ]}
-          />
+          <View style={trackSelectedStyles} />
         </View>
       </View>
     </View>
   );
-});
+}
 
 const styles = StyleSheet.create({
   wrapper: {
