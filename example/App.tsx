@@ -19,7 +19,7 @@ export default function App() {
       <>
         <View style={styles.example}>
           <Text>Basic single slider</Text>
-          <Slider
+          <Slider<number>
             min={1}
             max={100}
             values={[5]}
@@ -29,7 +29,7 @@ export default function App() {
         </View>
         <View style={styles.example}>
           <Text>Double slider</Text>
-          <Slider
+          <Slider<number>
             min={1}
             max={100}
             values={[10, 70]}
@@ -39,7 +39,7 @@ export default function App() {
         </View>
         <View style={styles.example}>
           <Text>Custom stop values</Text>
-          <Slider
+          <Slider<string>
             values={["D"]}
             sliderValues={[
               "A",
