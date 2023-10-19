@@ -1,4 +1,9 @@
-import { AccessibilityProps } from "react-native";
+import type {
+  AccessibilityProps,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 
 /**
  * The type of slider this is.
@@ -86,4 +91,6 @@ export type LabelProps = {
   markerCount: number;
   position: SliderStop;
   selected: boolean;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 };

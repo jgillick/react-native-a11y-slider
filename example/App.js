@@ -1,18 +1,41 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { StyleSheet, Text, View, SafeAreaView, ScrollView } from "react-native";
 import Slider, { MarkerType } from "react-native-a11y-slider";
 
 export default function App() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroller}>
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
+  // Disable the view scrolling when the slider is being dragged.
+  const sliderStart = useCallback(() => {
+    setScrollEnabled(false);
+  }, []);
+  const sliderStop = useCallback(() => {
+    setScrollEnabled(true);
+  }, []);
+
+  // Memoize the sliders so that they don't re-render when scrollEnabled changes
+  const scrollers = useMemo(() => {
+    return (
+      <>
         <View style={styles.example}>
           <Text>Basic single slider</Text>
-          <Slider min={1} max={100} values={[10]} />
+          <Slider
+            min={1}
+            max={100}
+            values={[5]}
+            onSlidingStart={sliderStart}
+            onSlidingComplete={sliderStop}
+          />
         </View>
         <View style={styles.example}>
           <Text>Double slider</Text>
-          <Slider min={1} max={100} values={[10, 70]} />
+          <Slider
+            min={1}
+            max={100}
+            values={[10, 70]}
+            onSlidingStart={sliderStart}
+            onSlidingComplete={sliderStop}
+          />
         </View>
         <View style={styles.example}>
           <Text>Custom stop values</Text>
@@ -46,6 +69,8 @@ export default function App() {
               "Y",
               "Z",
             ]}
+            onSlidingStart={sliderStart}
+            onSlidingComplete={sliderStop}
           />
         </View>
         <View style={styles.example}>
@@ -55,8 +80,33 @@ export default function App() {
             max={100}
             values={[20, 55]}
             markerComponent={CustomMarker}
+            onSlidingStart={sliderStart}
+            onSlidingComplete={sliderStop}
           />
         </View>
+        <View style={styles.example}>
+          <Text>Custom Label Styles</Text>
+          <Slider
+            min={1}
+            max={100}
+            values={[5]}
+            labelStyle={styles.labelStyle}
+            labelTextStyle={styles.labelTextStyle}
+            onSlidingStart={sliderStart}
+            onSlidingComplete={sliderStop}
+          />
+        </View>
+      </>
+    );
+  }, [sliderStart, sliderStop]);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scroller}
+        scrollEnabled={scrollEnabled}
+      >
+        {scrollers}
       </ScrollView>
     </SafeAreaView>
   );
@@ -94,5 +144,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#666",
     padding: 10,
+  },
+  labelStyle: {
+    backgroundColor: "#000",
+    borderRadius: 5,
+  },
+  labelTextStyle: {
+    fontSize: 16,
+    fontStyle: "italic",
+    color: "#fff",
   },
 });
