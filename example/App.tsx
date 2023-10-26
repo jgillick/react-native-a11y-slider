@@ -1,6 +1,10 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { StyleSheet, Text, View, SafeAreaView, ScrollView } from "react-native";
-import Slider, { MarkerType } from "react-native-a11y-slider";
+import Slider, {
+  MarkerType,
+  SliderLabel,
+  LabelProps,
+} from "react-native-a11y-slider";
 
 export default function App() {
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -96,6 +100,20 @@ export default function App() {
             onSlidingComplete={sliderStop}
           />
         </View>
+        <View style={styles.example}>
+          <Text>Custom Label Component</Text>
+          <Slider
+            min={1}
+            max={100}
+            values={[10, 50]}
+            onSlidingStart={sliderStart}
+            onSlidingComplete={sliderStop}
+            labelComponent={CustomLabel}
+            onChange={(values) => {
+              console.log("change", values);
+            }}
+          />
+        </View>
       </>
     );
   }, [sliderStart, sliderStop]);
@@ -103,7 +121,8 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
-        contentContainerStyle={styles.scroller}
+        style={styles.scroller}
+        contentContainerStyle={styles.scrollerContent}
         scrollEnabled={scrollEnabled}
       >
         {scrollers}
@@ -126,6 +145,23 @@ function CustomMarker({ type }) {
 }
 CustomMarker.size = 30;
 
+function CustomLabel(props: LabelProps) {
+  /**
+   * Format label value as currency
+   */
+  const position = useMemo(() => {
+    if (typeof props.position.value === "number") {
+      return {
+        ...props.position,
+        value: `$${props.position.value}`,
+      };
+    }
+    return props.position;
+  }, [props.position]);
+
+  return <SliderLabel {...props} position={position} />;
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -133,8 +169,12 @@ const styles = StyleSheet.create({
   },
   scroller: {
     flex: 1,
+  },
+  scrollerContent: {
     gap: 20,
     margin: 10,
+    paddingTop: 20,
+    paddingBottom: 50,
     flexDirection: "column",
     justifyContent: "center",
   },
