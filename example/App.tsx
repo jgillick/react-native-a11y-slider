@@ -105,13 +105,10 @@ export default function App() {
           <Slider
             min={1}
             max={100}
-            values={[10, 50]}
+            values={[50]}
             onSlidingStart={sliderStart}
             onSlidingComplete={sliderStop}
             labelComponent={CustomLabel}
-            onChange={(values) => {
-              console.log("change", values);
-            }}
           />
         </View>
       </>
